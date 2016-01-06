@@ -11,6 +11,8 @@ public class Settings : MonoBehaviour
 	{
 		ones.isOn = PlayerPrefs.GetInt ("ones") == 1;
 		zeroes.isOn = PlayerPrefs.GetInt ("zeroes") == 1;
+		level.value = PlayerPrefs.GetInt (GameControl.LEVEL) - 1;
+		level.enabled=false;
 	}
 
 	public void back ()
