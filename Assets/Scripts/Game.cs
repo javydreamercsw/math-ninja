@@ -13,7 +13,7 @@ public class Game : MonoBehaviour
 	private List<int> used = new List<int> ();
 	private Entry currentOp;
 	private string INVALID = "Invalid answer, make sure answer is a valid number!";
-	private float currentTime = 0.0f, executedTime = 0.0f, timeToWait = 5.0f, finalTimer = 60.0f * 4;
+	private float currentTime = 0.0f, executedTime = 0.0f, timeToWait = 3.0f, finalTimer = 60.0f * 4;
 	private bool displayMessage = false, timer = false, exit = false;
 	private string message;
 	private int failures = 0, finalTestAmount = 82;
