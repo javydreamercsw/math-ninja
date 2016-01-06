@@ -19,7 +19,7 @@ public class Game : MonoBehaviour
 	private int failures = 0, finalTestAmount = 82;
 	private AudioSource source;
 	public AudioClip lose1, lose2, timeover;
-	private int level, answers;
+	private int level, answers, questionsLeft = 0;
 
 	// Use this for initialization
 	void Awake ()
@@ -42,7 +42,7 @@ public class Game : MonoBehaviour
 	private void addOperation (Entry e)
 	{
 		//Check if operation is already in
-		if (!shouldIgnore(e.getOperation()) && !containsOperation (e.getOperation ())) {
+		if (!shouldIgnore (e.getOperation ()) && !containsOperation (e.getOperation ())) {
 			//Look closer
 			//This assumes simple operations with to operands and one operation. 
 			//It might not work for complex operations.
@@ -62,18 +62,16 @@ public class Game : MonoBehaviour
 		}
 	}
 
-	private Boolean shouldIgnore(string op){
+	private Boolean shouldIgnore (string op)
+	{
 		int one = PlayerPrefs.GetInt ("ones", 1);
 		int zero = PlayerPrefs.GetInt ("zeroes", 1);
 		if (one == 0 && (op.StartsWith ("1x") || op.EndsWith ("x1"))) {
-			//Debug.Log ("Ignoring: " + op);
 			return true;
 		}
 		if (zero == 0 && (op.StartsWith ("0x") || op.EndsWith ("x0"))) {
-			//Debug.Log ("Ignoring: " + op);
 			return true;
 		}
-		//Debug.Log ("Accepting: " + op);
 		return false;
 	}
 
@@ -97,13 +95,14 @@ public class Game : MonoBehaviour
 						if (levelInfo [i].Contains ("*")) {
 							//We need to expand this.
 							for (int j = 0; j < limit; j++) {
-									addOperation (new Entry (levelInfo [i].Replace ("*", "" + j)));
+								addOperation (new Entry (levelInfo [i].Replace ("*", "" + j)));
 							}
 						} else {
-								addOperation (new Entry (levelInfo [i]));
+							addOperation (new Entry (levelInfo [i]));
 						}
 					}
-					if (operations.Count > 0) {
+					questionsLeft = operations.Count;
+					if (questionsLeft > 0) {
 						//Load the first question
 						nextOp ();
 					}
@@ -157,6 +156,7 @@ public class Game : MonoBehaviour
 				display ("Correct!\nThe answer is: " + temp + "!");
 				currentOp.setResult (true);
 				answers++;
+				failures = 0;
 				nextOp ();
 			} else {
 				failures++;
@@ -280,7 +280,6 @@ public class Game : MonoBehaviour
 	void Update ()
 	{
 		if (!exit) {
-			int questionsLeft;
 			currentTime = Time.time;
 			if (displayMessage) {
 				text.text = message;
@@ -320,7 +319,7 @@ public class Game : MonoBehaviour
 					timer = false;
 				}
 			} else {
-				questionsLeft = operations.Count - answers;
+				questionsLeft -= answers;
 				time.text = "";
 			}
 			left.text = "Left: " + questionsLeft;
