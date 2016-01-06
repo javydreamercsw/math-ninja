@@ -84,7 +84,7 @@ public class Game : MonoBehaviour
 		level = PlayerPrefs.GetInt (GameControl.LEVEL, 0);
 		for (int x = 1; x <= level + 1; x++) {
 			//Get the level file and get ready
-			string[] levelInfo = GameControl.ReadFile ("level" + x);
+			string[] levelInfo = PlayerPrefs.GetString ("level" + (level + 1)).Split (',');
 			if (levelInfo != null && levelInfo.Length > 2) {
 				//Valid level (color, limit and at least one operation)
 				color = levelInfo [0];

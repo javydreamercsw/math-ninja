@@ -38,10 +38,10 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="UnityEngine">
-      <HintPath>F:/Program Files/Unity 5/Editor/Data/Managed/UnityEngine.dll</HintPath>
+      <HintPath>Z:/Program Files/Unity 5/Editor/Data/Managed/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
-      <HintPath>F:/Program Files/Unity 5/Editor/Data/Managed/UnityEditor.dll</HintPath>
+      <HintPath>Z:/Program Files/Unity 5/Editor/Data/Managed/UnityEditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -52,19 +52,13 @@
      <Compile Include="Assets\Scripts\NewPlayer.cs" />
      <Compile Include="Assets\Scripts\Profile.cs" />
      <Compile Include="Assets\Scripts\Settings.cs" />
+     <Compile Include="Assets\Scripts\Setup.cs" />
      <Compile Include="Assets\Scripts\Welcome.cs" />
-     <None Include="Assets\Resources\level6.txt" />
-     <None Include="Assets\Resources\level4.txt" />
-     <None Include="Assets\Resources\level1.txt" />
-     <None Include="Assets\Resources\level5.txt" />
-     <None Include="Assets\Resources\level3.txt" />
-     <None Include="Assets\Resources\level2.txt" />
-     <None Include="Assets\Resources\level7.txt" />
  <Reference Include="UnityEngine.UI">
- <HintPath>F:/Program Files/Unity 5/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ <HintPath>Z:/Program Files/Unity 5/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Networking">
- <HintPath>F:/Program Files/Unity 5/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+ <HintPath>Z:/Program Files/Unity 5/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

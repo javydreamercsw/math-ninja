@@ -22,4 +22,9 @@ public class Main : MonoBehaviour
 	{
 		GameControl.LoadLevel ("Settings");
 	}
+
+	public void ShowSetup ()
+	{
+		GameControl.LoadLevel ("Setup");
+	}
 }
