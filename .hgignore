@@ -2,3 +2,4 @@ syntax: glob
 Builds/*
 Temp/*
 *.userprefs
+Library/*
