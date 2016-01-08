@@ -6,13 +6,15 @@ public class Settings : MonoBehaviour
 {
 	public Toggle ones, zeroes;
 	public Dropdown level;
+	private bool active = false;
 	// Use this for initialization
 	void Awake ()
 	{
 		ones.isOn = PlayerPrefs.GetInt ("ones") == 1;
 		zeroes.isOn = PlayerPrefs.GetInt ("zeroes") == 1;
-		level.value = PlayerPrefs.GetInt (GameControl.LEVEL) - 1;
-		level.enabled=false;
+		int l = PlayerPrefs.GetInt (GameControl.LEVEL) - 1;
+		level.value = l > 0 && l < 8 ? l : 1;
+		level.gameObject.SetActive(false);
 	}
 
 	public void back ()
@@ -42,6 +44,12 @@ public class Settings : MonoBehaviour
 
 	public void toggle ()
 	{
-		level.enabled = !level.enabled;
+		active = !active;
+		if (active) {
+			Debug.Log ("Show");
+		} else {
+			Debug.Log ("Hide");
+		}
+		level.gameObject.SetActive(active);
 	}
 }

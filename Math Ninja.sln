@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 
 Project("{F58032D3-1DFB-B8A5-FF4C-18A1DBBBF8E8}") = "Math Ninja", "Assembly-CSharp.csproj", "{B3FE64F7-9809-F709-1377-5FB3FF0E3101}"
 EndProject
-Project("{F58032D3-1DFB-B8A5-FF4C-18A1DBBBF8E8}") = "Math Ninja", "Assembly-CSharp-Editor.csproj", "{1BBAF227-2829-1BC5-D8FC-986E82449454}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,10 +13,6 @@ Global
 		{B3FE64F7-9809-F709-1377-5FB3FF0E3101}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3FE64F7-9809-F709-1377-5FB3FF0E3101}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3FE64F7-9809-F709-1377-5FB3FF0E3101}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1BBAF227-2829-1BC5-D8FC-986E82449454}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1BBAF227-2829-1BC5-D8FC-986E82449454}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1BBAF227-2829-1BC5-D8FC-986E82449454}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1BBAF227-2829-1BC5-D8FC-986E82449454}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
