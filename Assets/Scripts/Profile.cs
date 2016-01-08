@@ -19,8 +19,10 @@ public class Profile : MonoBehaviour
 	{
 		PlayerPrefs.SetString (GameControl.NAME, playerName.text);
 		level.text = "Level: " + PlayerPrefs.GetInt (GameControl.LEVEL);
-		Sprite s = GameControl.instance.getLevelSprite ();
-		image.sprite = s;
+		if(GameControl.instance!=null){
+			Sprite s = GameControl.instance.getLevelSprite ();
+			image.sprite = s;
+		}
 	}
 
 	public void exit ()
