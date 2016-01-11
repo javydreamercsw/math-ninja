@@ -19,7 +19,7 @@ public class Settings : MonoBehaviour
 
 	public void back ()
 	{
-		GameControl.LoadLevel ("Main");
+		GameControl.LoadLevel ("Menu");
 		PlayerPrefs.Save ();
 	}
 

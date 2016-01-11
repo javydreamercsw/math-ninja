@@ -13,18 +13,8 @@ public class Main : MonoBehaviour
 		}
 	}
 
-	public void ShowProfile ()
+	public void ShowMenu ()
 	{
-		GameControl.LoadLevel ("Profile");
-	}
-
-	public void ShowSettings ()
-	{
-		GameControl.LoadLevel ("Settings");
-	}
-
-	public void ShowSetup ()
-	{
-		GameControl.LoadLevel ("Setup");
+		GameControl.LoadLevel ("Menu");
 	}
 }
