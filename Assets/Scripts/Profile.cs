@@ -28,7 +28,7 @@ public class Profile : MonoBehaviour
 	public void exit ()
 	{
 		PlayerPrefs.Save ();
-		GameControl.LoadLevel ("Main");
+		GameControl.LoadLevel ("Menu");
 	}
 
 	public void reset ()

@@ -49,6 +49,7 @@
      <Compile Include="Assets\Scripts\GameControl.cs" />
      <Compile Include="Assets\Scripts\Level.cs" />
      <Compile Include="Assets\Scripts\Main.cs" />
+     <Compile Include="Assets\Scripts\Menu.cs" />
      <Compile Include="Assets\Scripts\NewPlayer.cs" />
      <Compile Include="Assets\Scripts\Profile.cs" />
      <Compile Include="Assets\Scripts\Settings.cs" />
