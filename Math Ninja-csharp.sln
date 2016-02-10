@@ -1,7 +1,7 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2008
 
-Project("{F58032D3-1DFB-B8A5-FF4C-18A1DBBBF8E8}") = "Math Ninja", "Assembly-CSharp.csproj", "{B3FE64F7-9809-F709-1377-5FB3FF0E3101}"
+Project("{F58032D3-1DFB-B8A5-FF4C-18A1DBBBF8E8}") = "Math Ninja", "Assembly-CSharp-vs.csproj", "{B3FE64F7-9809-F709-1377-5FB3FF0E3101}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,7 +17,8 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-		GlobalSection(MonoDevelopProperties) = preSolution
+			GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 	EndGlobalSection
+
 EndGlobal
