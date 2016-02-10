@@ -156,6 +156,7 @@ public class Game : MonoBehaviour
 				display ("Correct!\nThe answer is: " + temp + "!");
 				currentOp.setResult (true);
 				answers++;
+				questionsLeft -= 1;
 				failures = 0;
 				nextOp ();
 			} else {
@@ -319,7 +320,6 @@ public class Game : MonoBehaviour
 					timer = false;
 				}
 			} else {
-				questionsLeft -= answers;
 				time.text = "";
 			}
 			left.text = "Left: " + questionsLeft;
