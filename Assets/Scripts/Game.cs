@@ -20,10 +20,24 @@ public class Game : MonoBehaviour
 	private AudioSource source;
 	public AudioClip lose1, lose2, timeover;
 	private int level, answers, questionsLeft = 0;
+	private string[] defaults = {
+		"yellow,10,6x6,6x7,6x8,7x7,7x8,8x8,1x*,0x*",
+		"green,10,10x*",
+		"blue,10,3x6,3x7,3x8,4x6,4x7,4x8",
+		"purple,11,11x*",
+		"brown,10,2x*,3x3,3x4,4x4",
+		"red,10,9x*",
+		"black,10,5x*"
+	};
 
 	// Use this for initialization
 	void Awake ()
 	{
+		for (int i = 0; i < defaults.Length; i++) {
+			if (PlayerPrefs.GetString ("level" + (i + 1)) == "") {
+				PlayerPrefs.SetString ("level" + (i + 1), defaults [i]);
+			}
+		}
 		source = GetComponent<AudioSource> ();
 		LoadLevel ();
 	}
@@ -82,9 +96,11 @@ public class Game : MonoBehaviour
 		operations.Clear ();
 		//Load level
 		level = PlayerPrefs.GetInt (GameControl.LEVEL, 0);
+		Debug.Log ("Current player level: "+level);
 		for (int x = 1; x <= level + 1; x++) {
+			Debug.Log ("Loading level: " + x);
 			//Get the level file and get ready
-			string[] levelInfo = PlayerPrefs.GetString ("level" + (level + 1)).Split (',');
+			string[] levelInfo = PlayerPrefs.GetString ("level" + x).Split (',');
 			if (levelInfo != null && levelInfo.Length > 2) {
 				//Valid level (color, limit and at least one operation)
 				color = levelInfo [0];
@@ -101,11 +117,6 @@ public class Game : MonoBehaviour
 							addOperation (new Entry (levelInfo [i]));
 						}
 					}
-					questionsLeft = operations.Count;
-					if (questionsLeft > 0) {
-						//Load the first question
-						nextOp ();
-					}
 				} else {
 					Debug.Log ("Invalid level limit: " + levelInfo [1]);
 				}
@@ -119,6 +130,11 @@ public class Game : MonoBehaviour
 				executedTime = Time.time;
 				timeToWait = 1.0f;
 			}
+		}
+		questionsLeft = operations.Count;
+		if (questionsLeft > 0) {
+			//Load the first question
+			nextOp ();
 		}
 	}
 

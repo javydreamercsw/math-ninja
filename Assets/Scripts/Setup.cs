@@ -7,23 +7,10 @@ public class Setup : MonoBehaviour
 {
 	public Dropdown level;
 	public InputField input;
-	private string[] defaults = {
-		"yellow,10,6x6,6x7,6x8,7x7,7x8,8x8,1x*,0x*",
-		"green,10,10x*",
-		"blue,10,3x6,3x7,3x8,4x6,4x7,4x8",
-		"purple,11,11x*",
-		"brown,10,2x*,3x3,3x4,4x4",
-		"red,10,9x*",
-		"black,10,5x*"
-	};
+
 	// Use this for initialization
 	void Awake ()
 	{
-		for (int i = 0; i < defaults.Length; i++) {
-			if (PlayerPrefs.GetString ("level" + (i + 1)) == "") {
-				PlayerPrefs.SetString ("level" + (i + 1), defaults [i]);
-			}
-		}
 		updateDisplay ();
 	}
 	
