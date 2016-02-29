@@ -13,7 +13,7 @@ public class Game : MonoBehaviour
 	private List<int> used = new List<int> ();
 	private Entry currentOp;
 	private string INVALID = "Invalid answer, make sure answer is a valid number!";
-	private float currentTime = 0.0f, executedTime = 0.0f, timeToWait = 3.0f, finalTimer = 60.0f * 4;
+	private float currentTime = 0.0f, executedTime = 0.0f, timeToWait = 3.0f, finalTimer;
 	private bool displayMessage = false, timer = false, exit = false;
 	private string message;
 	private int failures = 0, finalTestAmount = 82;
@@ -96,6 +96,7 @@ public class Game : MonoBehaviour
 		operations.Clear ();
 		//Load level
 		level = PlayerPrefs.GetInt (GameControl.LEVEL, 0);
+		finalTimer = 60.0f * (level==6?4:2);
 		Debug.Log ("Current player level: "+level);
 		for (int x = 1; x <= level + 1; x++) {
 			Debug.Log ("Loading level: " + x);
@@ -123,7 +124,7 @@ public class Game : MonoBehaviour
 			} else {
 				Debug.Log ("Empty file???");
 			}
-			if (level == 6) {
+			if (level == 6 || PlayerPrefs.GetInt ("challenge", 0) == 1) {
 				Debug.Log ("Level 7!");
 				//This is the final level. 82 random operations from all levels with a 4 minute time limit.
 				timer = true;
@@ -328,6 +329,7 @@ public class Game : MonoBehaviour
 					//Time is up!
 					playSound (timeover);
 					checkResults ();
+					timer = false;
 				}
 				//Check answers left
 				if (questionsLeft == 0) {

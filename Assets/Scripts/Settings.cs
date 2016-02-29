@@ -4,17 +4,18 @@ using System.Collections;
 
 public class Settings : MonoBehaviour
 {
-	public Toggle ones, zeroes;
+	public Toggle ones, zeroes, challenge;
 	public Dropdown level;
 	private bool active = false;
 	// Use this for initialization
 	void Awake ()
 	{
-		ones.isOn = PlayerPrefs.GetInt ("ones") == 1;
-		zeroes.isOn = PlayerPrefs.GetInt ("zeroes") == 1;
+		ones.isOn = PlayerPrefs.GetInt ("ones", 0) == 1;
+		zeroes.isOn = PlayerPrefs.GetInt ("zeroes", 0) == 1;
+		challenge.isOn = PlayerPrefs.GetInt ("challenge", 0) == 1;
 		int l = PlayerPrefs.GetInt (GameControl.LEVEL) - 1;
 		level.value = l > 0 && l < 8 ? l : 1;
-		level.gameObject.SetActive(false);
+		level.gameObject.SetActive (false);
 	}
 
 	public void back ()
@@ -37,6 +38,13 @@ public class Settings : MonoBehaviour
 		PlayerPrefs.Save ();
 	}
 
+	public void toggleChallenge ()
+	{
+		PlayerPrefs.SetInt ("challenge", challenge.isOn ? 1 : 0);
+		Debug.Log ("challenge=" + PlayerPrefs.GetInt ("challenge"));
+		PlayerPrefs.Save ();
+	}
+
 	public void updateLevel ()
 	{
 		PlayerPrefs.SetInt (GameControl.LEVEL, level.value + 1);
@@ -50,6 +58,6 @@ public class Settings : MonoBehaviour
 		} else {
 			Debug.Log ("Hide");
 		}
-		level.gameObject.SetActive(active);
+		level.gameObject.SetActive (active);
 	}
 }
