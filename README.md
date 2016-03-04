@@ -5,7 +5,6 @@ This is a Unity 3D version 5 project. It won't open on earlier builds.
 ### What is this repository for? ###
 
 * Source of the project including sounds and images.
-* 0.2
 
 ### How do I get set up? ###
 
