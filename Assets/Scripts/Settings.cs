@@ -1,63 +1,74 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
-public class Settings : MonoBehaviour
-{
+public class Settings : MonoBehaviour {
 	public Toggle ones, zeroes, challenge;
-	public Dropdown level;
+	public Dropdown level, mode;
 	private bool active = false;
 	// Use this for initialization
-	void Awake ()
-	{
-		ones.isOn = PlayerPrefs.GetInt ("ones", 0) == 1;
-		zeroes.isOn = PlayerPrefs.GetInt ("zeroes", 0) == 1;
-		challenge.isOn = PlayerPrefs.GetInt ("challenge", 0) == 1;
-		int l = PlayerPrefs.GetInt (GameControl.LEVEL) - 1;
+	void Awake() {
+		ones.isOn = ProfileManager.getIntSetting("ones", 0) == 1;
+		zeroes.isOn = ProfileManager.getIntSetting("zeroes", 0) == 1;
+		challenge.isOn = ProfileManager.getIntSetting("challenge", 0) == 1;
+		int l = ProfileManager.getIntSetting(GameControl.LEVEL +
+			ProfileManager.getStringSetting(GameControl.MODE)) - 1;
 		level.value = l > 0 && l < 8 ? l : 1;
-		level.gameObject.SetActive (false);
-	}
-
-	public void back ()
-	{
-		GameControl.LoadLevel ("Menu");
-		PlayerPrefs.Save ();
-	}
-
-	public void togleOnes ()
-	{
-		PlayerPrefs.SetInt ("ones", ones.isOn ? 1 : 0);
-		Debug.Log ("one=" + PlayerPrefs.GetInt ("ones"));
-		PlayerPrefs.Save ();
-	}
-
-	public void toggleZeroes ()
-	{
-		PlayerPrefs.SetInt ("zeroes", zeroes.isOn ? 1 : 0);
-		Debug.Log ("zero=" + PlayerPrefs.GetInt ("zeroes"));
-		PlayerPrefs.Save ();
-	}
-
-	public void toggleChallenge ()
-	{
-		PlayerPrefs.SetInt ("challenge", challenge.isOn ? 1 : 0);
-		Debug.Log ("challenge=" + PlayerPrefs.GetInt ("challenge"));
-		PlayerPrefs.Save ();
-	}
-
-	public void updateLevel ()
-	{
-		PlayerPrefs.SetInt (GameControl.LEVEL, level.value + 1);
-	}
-
-	public void toggle ()
-	{
-		active = !active;
-		if (active) {
-			Debug.Log ("Show");
-		} else {
-			Debug.Log ("Hide");
+		level.gameObject.SetActive(false);
+		//Load modes
+		mode.ClearOptions();
+		List<Dropdown.OptionData> data = new List<Dropdown.OptionData>();
+		int index = 0;
+		int i = 0;
+		String currentMode = ProfileManager.getStringSetting(GameControl.MODE);
+		foreach (Game.MODE m in Enum.GetValues(typeof(Game.MODE))) {
+			data.Add(new Dropdown.OptionData(m.ToString()));
+			if (m.ToString().Equals(currentMode)) {
+				index = i;
+			}
+			i++;
 		}
-		level.gameObject.SetActive (active);
+		mode.AddOptions(data);
+		//Preselect current mode
+		mode.value = index;
+	}
+
+	public void myDropdownValueChangedHandler() {
+		Debug.Log("Selected: " + mode.value);
+		//Save Mode
+		ProfileManager.setStringSetting(GameControl.MODE,
+		mode.options[mode.value].text);
+	}
+
+
+	public void back() {
+		GameControl.LoadLevel("Menu");
+		PlayerPrefs.Save();
+	}
+
+	public void togleOnes() {
+		ProfileManager.setIntSetting("ones", ones.isOn ? 1 : 0);
+		PlayerPrefs.Save();
+	}
+
+	public void toggleZeroes() {
+		ProfileManager.setIntSetting("zeroes", zeroes.isOn ? 1 : 0);
+		PlayerPrefs.Save();
+	}
+
+	public void toggleChallenge() {
+		ProfileManager.setIntSetting("challenge", challenge.isOn ? 1 : 0);
+		PlayerPrefs.Save();
+	}
+
+	public void updateLevel() {
+		ProfileManager.setIntSetting(GameControl.LEVEL +
+			ProfileManager.getStringSetting(GameControl.MODE), level.value + 1);
+	}
+
+	public void toggle() {
+		active = !active;
+		level.gameObject.SetActive(active);
 	}
 }

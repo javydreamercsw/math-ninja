@@ -3,14 +3,19 @@ using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
 
-public class Game : MonoBehaviour
-{
+public class Game : MonoBehaviour {
+	public enum MODE {
+		MULTIPLICATION,
+		SUBSTRACTION,
+		ALL//To be always last
+	};
 	public Text text, time, left;
 	public InputField answer;
 	private string color;
+	private MODE currentMode;
 	private int limit, maxFailures = 3;
-	private List<Entry> operations = new List<Entry> ();
-	private List<int> used = new List<int> ();
+	private List<Entry> operations = new List<Entry>();
+	private List<int> used = new List<int>();
 	private Entry currentOp;
 	private string INVALID = "Invalid answer, make sure answer is a valid number!";
 	private float currentTime = 0.0f, executedTime = 0.0f, timeToWait = 3.0f, finalTimer;
@@ -20,7 +25,7 @@ public class Game : MonoBehaviour
 	private AudioSource source;
 	public AudioClip lose1, lose2, timeover;
 	private int level, answers, questionsLeft = 0;
-	private string[] defaults = {
+	private string[] multiplication = {
 		"yellow,10,6x6,6x7,6x8,7x7,7x8,8x8,1x*,0x*",
 		"green,10,10x*",
 		"blue,10,3x6,3x7,3x8,4x6,4x7,4x8",
@@ -29,23 +34,46 @@ public class Game : MonoBehaviour
 		"red,10,9x*",
 		"black,10,5x*"
 	};
+	private string[] substraction = {
+		 "yellow,5,5-*",
+		 "green,10,10-*",
+		 "blue,20,20-*",
+		 "purple,50,50-*",
+		 "brown,75,75-*",
+		 "red,90,90-*",
+		 "black,100,100-*"
+	};
 
-	// Use this for initialization
-	void Awake ()
-	{
-		for (int i = 0; i < defaults.Length; i++) {
-			if (PlayerPrefs.GetString ("level" + (i + 1)) == "") {
-				PlayerPrefs.SetString ("level" + (i + 1), defaults [i]);
+	void loadMode(MODE m, String[] values) {
+		for (int i = 0; i < values.Length; i++) {
+			if (PlayerPrefs.GetString(ProfileManager.USER
+			+ PlayerPrefs.GetInt(GameControl.PLAYER_NUMBER, 0)
+			+ "level" + (i + 1) + m.ToString()) == "") {
+				PlayerPrefs.SetString(ProfileManager.USER
+			+ PlayerPrefs.GetInt(GameControl.PLAYER_NUMBER, 0)
+			+ "level" + (i + 1) + m.ToString(), values[i]);
+				Debug.Log("Saving: " + ProfileManager.USER
+			+ PlayerPrefs.GetInt(GameControl.PLAYER_NUMBER, 0)
+			+ "level" + (i + 1) + m.ToString());
 			}
 		}
-		source = GetComponent<AudioSource> ();
-		LoadLevel ();
 	}
 
-	private bool containsOperation (string op)
-	{
+	// Use this for initialization
+	void Awake() {
+		PlayerPrefs.DeleteAll();
+		loadMode(MODE.MULTIPLICATION, multiplication);
+		loadMode(MODE.SUBSTRACTION, substraction);
+		currentMode = (MODE)Enum.Parse(typeof(MODE),
+			ProfileManager.getStringSetting(GameControl.MODE,
+			MODE.MULTIPLICATION.ToString()));
+		source = GetComponent<AudioSource>();
+		LoadLevel(currentMode);
+	}
+
+	private bool containsOperation(string op) {
 		foreach (Entry temp in operations) {
-			if (temp.getOperation ().Equals (op)) {
+			if (temp.getOperation().Equals(op)) {
 				//Is the same, no need to add.
 				return true;
 			}
@@ -53,79 +81,84 @@ public class Game : MonoBehaviour
 		return false;
 	}
 
-	private void addOperation (Entry e)
-	{
+	private void addOperation(Entry e) {
 		//Check if operation is already in
-		if (!shouldIgnore (e.getOperation ()) && !containsOperation (e.getOperation ())) {
+		if (!shouldIgnore(e.getOperation()) && !containsOperation(e.getOperation())) {
 			//Look closer
 			//This assumes simple operations with to operands and one operation. 
 			//It might not work for complex operations.
-			string op = e.getOperation ();
+			string op = e.getOperation();
 			string left = "", right = "", sign = "";
-			if (op.Contains ("x")) {
+			if (op.Contains("x")) {
 				sign = "x";
-				left = op.Substring (0, op.IndexOf ("x"));
-				right = op.Substring (op.IndexOf ("x") + 1);
+				left = op.Substring(0, op.IndexOf("x"));
+				right = op.Substring(op.IndexOf("x") + 1);
 			}
-			if (!containsOperation (left + sign + right) && !containsOperation (right + sign + left)) {
-				Debug.Log ("Adding: " + e.getOperation ());
-				operations.Add (e);
-			} else {
-				Debug.Log ("Ignoring duplicated operation: " + e.getOperation ());
+			if (!containsOperation(left + sign + right) && !containsOperation(right + sign + left)) {
+				Debug.Log("Adding: " + e.getOperation());
+				operations.Add(e);
+			}
+			else {
+				Debug.Log("Ignoring duplicated operation: " + e.getOperation());
 			}
 		}
 	}
 
-	private Boolean shouldIgnore (string op)
-	{
-		int one = PlayerPrefs.GetInt ("ones", 1);
-		int zero = PlayerPrefs.GetInt ("zeroes", 1);
-		if (one == 0 && (op.StartsWith ("1x") || op.EndsWith ("x1"))) {
+	private Boolean shouldIgnore(string op) {
+		int one = ProfileManager.getIntSetting("ones", 1);
+		int zero = ProfileManager.getIntSetting("zeroes", 1);
+		if (one == 0 && (op.StartsWith("1x") || op.EndsWith("x1"))) {
 			return true;
 		}
-		if (zero == 0 && (op.StartsWith ("0x") || op.EndsWith ("x0"))) {
+		if (zero == 0 && (op.StartsWith("0x") || op.EndsWith("x0"))) {
 			return true;
 		}
 		return false;
 	}
 
-	private void LoadLevel ()
-	{
-		used.Clear ();
+	private void LoadLevel(MODE mode) {
+		used.Clear();
 		answers = 0;
-		operations.Clear ();
+		operations.Clear();
 		//Load level
-		level = PlayerPrefs.GetInt (GameControl.LEVEL, 0);
-		finalTimer = 60.0f * (level==6?4:2);
-		Debug.Log ("Current player level: "+level);
+		level = ProfileManager.getIntSetting(GameControl.LEVEL
+			+ ProfileManager.getStringSetting(GameControl.MODE));
+		finalTimer = 60.0f * (level == 6 ? 4 : 2);
+		Debug.Log("Current player level: " + level);
+		Debug.Log("Loading Mode: " + currentMode.ToString());
 		for (int x = 1; x <= level + 1; x++) {
-			Debug.Log ("Loading level: " + x);
+			Debug.Log("Loading level: " + x);
 			//Get the level file and get ready
-			string[] levelInfo = PlayerPrefs.GetString ("level" + x).Split (',');
+			string[] levelInfo = ProfileManager.getStringSetting("level"
+				+ x + currentMode.ToString(), "").Split(',');
+			Debug.Log(levelInfo[0]);
 			if (levelInfo != null && levelInfo.Length > 2) {
-				//Valid level (color, limit and at least one operation)
-				color = levelInfo [0];
-				if (Int32.TryParse (levelInfo [1], out limit)) {
+				//Valid level (mode, color, limit and at least one operation)
+				color = levelInfo[0];
+				if (Int32.TryParse(levelInfo[1], out limit)) {
 					//Parse operations
 					for (int i = 2; i < levelInfo.Length; i++) {
 						//Debug.Log (levelInfo [i]);
-						if (levelInfo [i].Contains ("*")) {
+						if (levelInfo[i].Contains("*")) {
 							//We need to expand this.
 							for (int j = 0; j < limit; j++) {
-								addOperation (new Entry (levelInfo [i].Replace ("*", "" + j)));
+								addOperation(new Entry(levelInfo[i].Replace("*", "" + j)));
 							}
-						} else {
-							addOperation (new Entry (levelInfo [i]));
+						}
+						else {
+							addOperation(new Entry(levelInfo[i]));
 						}
 					}
-				} else {
-					Debug.Log ("Invalid level limit: " + levelInfo [1]);
 				}
-			} else {
-				Debug.Log ("Empty file???");
+				else {
+					Debug.Log("Invalid level limit: " + levelInfo[1]);
+				}
 			}
-			if (level == 6 || PlayerPrefs.GetInt ("challenge", 0) == 1) {
-				Debug.Log ("Level 7!");
+			else {
+				Debug.Log("Empty file???");
+			}
+			if (level == 6 || ProfileManager.getIntSetting("challenge", 0) == 1) {
+				Debug.Log("Level 7!");
 				//This is the final level. 82 random operations from all levels with a 4 minute time limit.
 				timer = true;
 				executedTime = Time.time;
@@ -135,136 +168,143 @@ public class Game : MonoBehaviour
 		questionsLeft = operations.Count;
 		if (questionsLeft > 0) {
 			//Load the first question
-			nextOp ();
+			nextOp();
 		}
 	}
 
-	private void nextOp ()
-	{
+	private void nextOp() {
 		if ((used.Count == operations.Count) || (timer && answers == finalTestAmount)) {
-			display ("Congratulations!\nYou are now a " + color + " belt!");
-			PlayerPrefs.SetInt (GameControl.LEVEL, PlayerPrefs.GetInt (GameControl.LEVEL) + 1);
-			PlayerPrefs.Save ();
+			display("Congratulations!\nYou are now a " + color + " belt!");
+			ProfileManager.setIntSetting(GameControl.LEVEL +
+				ProfileManager.getStringSetting(GameControl.MODE),
+			ProfileManager.getIntSetting(GameControl.LEVEL +
+			ProfileManager.getStringSetting(GameControl.MODE)) + 1);
 			timer = false;
-			GameControl.LoadLevel ("Level");
-		} else {
+			GameControl.LoadLevel("Level");
+		}
+		else {
 			Boolean valid = false;
 			int index = -1;
 			while (!valid) {
-				index = UnityEngine.Random.Range (0, operations.Count);
-				valid = !used.Contains (index);
+				index = UnityEngine.Random.Range(0, operations.Count);
+				valid = !used.Contains(index);
 			}
-			used.Add (index);
-			currentOp = operations [index];
-			Debug.Log ("Current op: " + currentOp.getOperation ());
+			used.Add(index);
+			currentOp = operations[index];
+			Debug.Log("Current op: " + currentOp.getOperation());
 		}
 	}
 
-	public void Answer ()
-	{
+	public void Answer() {
 		double result = 0;
-		if (Double.TryParse (answer.text, out result)) {
+		if (Double.TryParse(answer.text, out result)) {
 			//Valid result
 			//Parse operation
-			double temp = Evaluate (currentOp.getOperation ());
-			currentOp.setUsed (true);
-			Debug.Log ("Comparing answer: " + result + " with " + temp);
+			double temp = Evaluate(currentOp.getOperation());
+			currentOp.setUsed(true);
+			Debug.Log("Comparing answer: " + result + " with " + temp);
 			if (result == temp) {
-				display ("Correct!\nThe answer is: " + temp + "!");
-				currentOp.setResult (true);
+				display("Correct!\nThe answer is: " + temp + "!");
+				currentOp.setResult(true);
 				answers++;
 				questionsLeft -= 1;
 				failures = 0;
-				nextOp ();
-			} else {
+				nextOp();
+			}
+			else {
 				failures++;
-				currentOp.setResult (false);
+				currentOp.setResult(false);
 				if (level == 7) {
-					nextOp ();
-				} else {
+					nextOp();
+				}
+				else {
 					if (failures == maxFailures) {
-						display ("Incorrect! The answer is: " + temp + ".\nTry again!");
-						playLoseSound ();
-					} else {
-						display ("Incorrect!\nTry again!");
-						playLoseSound ();
+						display("Incorrect! The answer is: " + temp + ".\nTry again!");
+						playLoseSound();
+					}
+					else {
+						display("Incorrect!\nTry again!");
+						playLoseSound();
 					}
 				}
 			}
-		} else {
-			display (INVALID);
+		}
+		else {
+			display(INVALID);
 		}
 		answer.text = "";
 	}
 
-	private void display (string mess)
-	{
+	private void display(string mess) {
 		message = mess;
 		displayMessage = true;
 		executedTime = Time.time;
 	}
 
-	public static double Evaluate (String expr)
-	{
+	public static double Evaluate(String expr) {
 
-		Stack<String> stack = new Stack<String> ();
+		Stack<String> stack = new Stack<String>();
 
 		string value = "";
 		for (int i = 0; i < expr.Length; i++) {
-			String s = expr.Substring (i, 1);
-			char chr = s.ToCharArray () [0];
+			String s = expr.Substring(i, 1);
+			char chr = s.ToCharArray()[0];
 
-			if (!char.IsDigit (chr) && chr != '.' && value != "") {
-				stack.Push (value);
+			if (!char.IsDigit(chr) && chr != '.' && value != "") {
+				stack.Push(value);
 				value = "";
 			}
 
-			if (s.Equals ("(")) {
+			if (s.Equals("(")) {
 
 				string innerExp = "";
 				i++; //Fetch Next Character
 				int bracketCount = 0;
 				for (; i < expr.Length; i++) {
-					s = expr.Substring (i, 1);
+					s = expr.Substring(i, 1);
 
-					if (s.Equals ("(")) {
+					if (s.Equals("(")) {
 						bracketCount++;
 					}
 
-					if (s.Equals (")")) {
+					if (s.Equals(")")) {
 						if (bracketCount == 0) {
 							break;
-						} else {
+						}
+						else {
 							bracketCount--;
 						}
 					}
 					innerExp += s;
 				}
 
-				stack.Push (Evaluate (innerExp).ToString ());
+				stack.Push(Evaluate(innerExp).ToString());
 
-			} else if (s.Equals ("+"))
-				stack.Push (s);
-			else if (s.Equals ("-"))
-				stack.Push (s);
-			else if (s.Equals ("x"))
-				stack.Push (s);
-			else if (s.Equals ("/"))
-				stack.Push (s);
-			else if (s.Equals ("sqrt"))
-				stack.Push (s);
-			else if (s.Equals (")")) {
-			} else if (char.IsDigit (chr) || chr == '.') {
+			}
+			else if (s.Equals("+"))
+				stack.Push(s);
+			else if (s.Equals("-"))
+				stack.Push(s);
+			else if (s.Equals("x"))
+				stack.Push(s);
+			else if (s.Equals("/"))
+				stack.Push(s);
+			else if (s.Equals("sqrt"))
+				stack.Push(s);
+			else if (s.Equals(")")) {
+			}
+			else if (char.IsDigit(chr) || chr == '.') {
 				value += s;
 
-				if (value.Split ('.').Length > 2)
-					throw new Exception ("Invalid decimal.");
+				if (value.Split('.').Length > 2)
+					throw new Exception("Invalid decimal.");
 
 				if (i == (expr.Length - 1))
-					stack.Push (value);
+					stack.Push(value);
 
-			} else {
-				throw new Exception ("Invalid character.");
+			}
+			else {
+				throw new Exception("Invalid character.");
 			}
 		}
 
@@ -272,40 +312,45 @@ public class Game : MonoBehaviour
 		double result = 0;
 		while (stack.Count >= 3) {
 
-			double right = Convert.ToDouble (stack.Pop ());
-			string op = stack.Pop ();
-			double left = Convert.ToDouble (stack.Pop ());
+			double right = Convert.ToDouble(stack.Pop());
+			string op = stack.Pop();
+			double left = Convert.ToDouble(stack.Pop());
 
 			if (op == "+") {
 				result = left + right;
-			} else if (op == "+") {
+			}
+			else if (op == "+") {
 				result = left + right;
-			} else if (op == "-") {
+			}
+			else if (op == "-") {
 				result = left - right;
-			} else if (op == "x") {
+			}
+			else if (op == "x") {
 				result = left * right;
-			} else if (op == "/") {
+			}
+			else if (op == "/") {
 				result = left / right;
 			}
 
-			stack.Push (result.ToString ());
+			stack.Push(result.ToString());
 		}
-			
-		return Convert.ToDouble (stack.Pop ());
+
+		return Convert.ToDouble(stack.Pop());
 	}
 
 	// Update is called once per frame
-	void Update ()
-	{
+	void Update() {
 		if (!exit) {
 			currentTime = Time.time;
 			if (displayMessage) {
 				text.text = message;
-			} else {
+			}
+			else {
 				if (currentOp == null) {
 					text.text = "Error Loading Level: " + level;
-				} else {
-					text.text = currentOp.getOperation ();
+				}
+				else {
+					text.text = currentOp.getOperation();
 				}
 			}
 			if (executedTime != 0.0f) {
@@ -313,117 +358,108 @@ public class Game : MonoBehaviour
 					executedTime = 0.0f;
 					displayMessage = false;
 					if (failures == 3) {
-						GameControl.LoadLevel ("Main");
+						GameControl.LoadLevel("Main");
 					}
 				}
 			}
 			if (timer) {
 				//Display the timer
 				float t = (executedTime + finalTimer) - currentTime;
-				int minutes = Mathf.FloorToInt (t / 60F);
-				int seconds = Mathf.FloorToInt (t - minutes * 60);
-				time.text = string.Format ("{0:0}:{1:00}", minutes, seconds);
+				int minutes = Mathf.FloorToInt(t / 60F);
+				int seconds = Mathf.FloorToInt(t - minutes * 60);
+				time.text = string.Format("{0:0}:{1:00}", minutes, seconds);
 				questionsLeft = finalTestAmount - answers;
 				//Check time left
 				if (minutes == 0 && seconds == 0) {
 					//Time is up!
-					playSound (timeover);
-					checkResults ();
+					playSound(timeover);
+					checkResults();
 					timer = false;
 				}
 				//Check answers left
 				if (questionsLeft == 0) {
 					//I'm done. Stop timer and check answers
-					checkResults ();
+					checkResults();
 					timer = false;
 				}
-			} else {
+			}
+			else {
 				time.text = "";
 			}
 			left.text = "Left: " + questionsLeft;
 		}
 	}
 
-	private void checkResults ()
-	{
+	private void checkResults() {
 		int errors = 0;
 		foreach (Entry e in operations) {
-			if (!e.getResult () && e.getUsed ()) {
+			if (!e.getResult() && e.getUsed()) {
 				errors++;
 			}
 		}
 		if (errors > 0) {
 			if (errors == 0) {
-				nextOp ();
-			} else {
-				display ("You had " + (errors) + " errors.\nKeep trying!");
-				playLoseSound ();
-				System.Threading.Thread.Sleep (5000);
+				nextOp();
+			}
+			else {
+				display("You had " + (errors) + " errors.\nKeep trying!");
+				playLoseSound();
+				System.Threading.Thread.Sleep(5000);
 				exit = true;
-				GameControl.LoadLevel ("Main");
+				GameControl.LoadLevel("Main");
 			}
 		}
 	}
 
-	private class Entry
-	{
+	private class Entry {
 		private string operation;
 		private bool result = false, used = false;
 
-		public Entry (string op)
-		{
+		public Entry(string op) {
 			operation = op;
 		}
 
-		public string getOperation ()
-		{
+		public string getOperation() {
 			return operation;
 		}
 
-		public void setResult (bool r)
-		{
+		public void setResult(bool r) {
 			result = r;
 		}
 
-		public bool getResult ()
-		{
+		public bool getResult() {
 			return result;
 		}
 
-		public void setUsed (bool u)
-		{
+		public void setUsed(bool u) {
 			used = u;
 		}
 
-		public bool getUsed ()
-		{
+		public bool getUsed() {
 			return used;
 		}
 	}
 
-	public void playLoseSound ()
-	{
-		switch (UnityEngine.Random.Range (1, 2)) {
-		case 1:
-			playSound (lose1);
-			break;
-		case 2:
-			playSound (lose2);
-			break;
+	public void playLoseSound() {
+		switch (UnityEngine.Random.Range(1, 2)) {
+			case 1:
+				playSound(lose1);
+				break;
+			case 2:
+				playSound(lose2);
+				break;
 		}
 	}
 
-	private void playSound (AudioClip clip)
-	{
+	private void playSound(AudioClip clip) {
 		if (source.isPlaying) {
-			source.Stop ();
+			source.Stop();
 		}
 		source.volume = 1.0f;
-		source.PlayOneShot (clip);
+		source.PlayOneShot(clip);
 	}
 
-	public void Quit ()
-	{
-		GameControl.LoadLevel ("Main");
+	public void Quit() {
+		GameControl.LoadLevel("Main");
 	}
 }
