@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
-using UnityEngine.Advertisements;
+//using UnityEngine.Advertisements;
 
 public class Main : MonoBehaviour {
 
-	public void ShowAd() {
-		if (Advertisement.IsReady()) {
-			Advertisement.Show();
-		}
-	}
+	//public void ShowAd() {
+	//	if (Advertisement.IsReady()) {
+	//		Advertisement.Show();
+	//	}
+	//}
 
 	public void load() {
 		Debug.Log("Player: " + PlayerPrefs.GetString(GameControl.NAME));

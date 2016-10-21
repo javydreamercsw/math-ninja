@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2015
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "math-ninja.CSharp", "math-ninja.CSharp.csproj", "{BD2E6AD5-49B1-9341-91F0-D4F76AFF3AAC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "math-ninja.CSharp.Editor", "math-ninja.CSharp.Editor.csproj", "{849DA763-8FF2-8444-8940-9A9C1AC7F9B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{BD2E6AD5-49B1-9341-91F0-D4F76AFF3AAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD2E6AD5-49B1-9341-91F0-D4F76AFF3AAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD2E6AD5-49B1-9341-91F0-D4F76AFF3AAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{849DA763-8FF2-8444-8940-9A9C1AC7F9B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{849DA763-8FF2-8444-8940-9A9C1AC7F9B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{849DA763-8FF2-8444-8940-9A9C1AC7F9B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{849DA763-8FF2-8444-8940-9A9C1AC7F9B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
