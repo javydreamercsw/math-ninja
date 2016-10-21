@@ -1,31 +1,38 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
-public class Level : MonoBehaviour
-{
+public class Level : MonoBehaviour {
 
 	public Text mess;
 	public Image image;
 	// Use this for initialization
-	void Awake ()
-	{
-		int level = PlayerPrefs.GetInt (GameControl.LEVEL);
+	void Awake() {
+		ProfileManager.setStringSetting(GameControl.MODE, Game.MODE.MULTIPLICATION.ToString());
+		ProfileManager.setIntSetting(GameControl.LEVEL
+			+ ProfileManager.getStringSetting(GameControl.MODE), 1);
+		//------------------
+		int level = ProfileManager.getIntSetting(GameControl.LEVEL
+			+ ProfileManager.getStringSetting(GameControl.MODE));
 		if (level > 0) {
-			string[] levelInfo = PlayerPrefs.GetString ("level" + level).Split (',');
-			mess.text = "Your current belt is " + levelInfo [0];
-		} else {
+			string[] levelInfo = ProfileManager.getStringSetting("level" + level +
+				ProfileManager.getStringSetting(GameControl.MODE)).Split(',');
+			mess.text = "Your current belt is " + levelInfo[0];
+		}
+		else {
 			mess.text = "Your current belt is white";
 		}
-		Debug.Log(mess.text);
-		Sprite s = GameControl.instance.getLevelSprite ();
-		if (s != null) {
-			image.sprite = s;
+		Game.MODE mode = (Game.MODE)Enum.Parse(typeof(Game.MODE),
+			ProfileManager.getStringSetting(GameControl.MODE));
+		if (GameControl.instance != null) {
+			Sprite s = GameControl.instance.getLevelSprite(mode);
+			if (s != null) {
+				image.sprite = s;
+			}
 		}
 	}
 
-	public void exit ()
-	{
-		GameControl.LoadLevel ("Main");
+	public void exit() {
+		GameControl.LoadLevel("Main");
 	}
 }
