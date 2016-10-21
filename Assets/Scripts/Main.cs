@@ -1,6 +1,14 @@
 ﻿using UnityEngine;
+using UnityEngine.Advertisements;
 
 public class Main : MonoBehaviour {
+
+	public void ShowAd() {
+		if (Advertisement.IsReady()) {
+			Advertisement.Show();
+		}
+	}
+
 	public void load() {
 		Debug.Log("Player: " + PlayerPrefs.GetString(GameControl.NAME));
 		if (PlayerPrefs.GetInt(ProfileManager.NUMBER_OF_USERS) == 0) {
@@ -14,12 +22,6 @@ public class Main : MonoBehaviour {
 		else {
 			GameControl.LoadLevel("Welcome");
 		}
-#if DEBUG
-		Debug.Log("Amount of profiles: " + ProfileManager.getAmountOfUsers());
-		for (int i = 0; i < ProfileManager.getAmountOfUsers(); i++) {
-			ProfileManager.showProfile(i);
-		}
-#endif
 	}
 
 	public void ShowMenu() {
