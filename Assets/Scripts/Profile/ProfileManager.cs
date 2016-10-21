@@ -4,7 +4,6 @@ using UnityEngine;
 public static class ProfileManager {
 	public static String NUMBER_OF_USERS = "NumberOfUsers", USER = "User";
 
-#if UNITY_STANDALONE
 	public static String[] getUsers() {
 		if (getAmountOfUsers() > 0) {
 			String[] users = new String[getAmountOfUsers()];
@@ -34,8 +33,6 @@ public static class ProfileManager {
 		}
 		Debug.Log("Added user: " + username);
 	}
-#endif
-
 
 	public static void showProfile(int i) {
 		Debug.Log("Profile: " + i);
