@@ -4,3 +4,7 @@ Temp/*
 *.userprefs
 Library/*
 obj/
+Build/**/*Data/*
+Build/**/*.exe
+Build/**/*.sh
+Build/**/*.app
