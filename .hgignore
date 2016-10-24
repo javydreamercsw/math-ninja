@@ -9,3 +9,4 @@ Build/**/*.exe
 Build/**/*.sh
 Build/**/*.app
 Build/**/*.apk
+Build/**/*.x86*
