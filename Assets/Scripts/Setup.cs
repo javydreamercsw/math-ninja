@@ -1,19 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Setup : MonoBehaviour {
-	public Dropdown level;
+	public Dropdown level, mode;
 	public InputField input;
 
 	// Use this for initialization
 	void Awake() {
+		ProfileManager.showProfile(PlayerPrefs.GetInt(GameControl.PLAYER_NUMBER, 0));
+		mode.ClearOptions();
+		List<Dropdown.OptionData> data = new List<Dropdown.OptionData>();
+		foreach (Game.MODE m in Enum.GetValues(typeof(Game.MODE))) {
+			if (!m.Equals(Game.MODE.ALL)) {
+				data.Add(new Dropdown.OptionData(m.ToString()));
+			}
+		}
+		mode.AddOptions(data);
 		updateDisplay();
-	}
-
-	// Update is called once per frame
-	void Update() {
-
 	}
 
 	public void exit() {
@@ -22,7 +27,9 @@ public class Setup : MonoBehaviour {
 	}
 
 	public void updateDisplay() {
-		input.text = ProfileManager.getStringSetting("level" + (level.value + 1));
+		Debug.Log("Updating level config: " + (level.value + 1) + ": " + mode.options[mode.value].text);
+		input.text = ProfileManager.getStringSetting("level" + (level.value + 1)
+			+ mode.options[mode.value].text);
 	}
 
 	public void save() {
