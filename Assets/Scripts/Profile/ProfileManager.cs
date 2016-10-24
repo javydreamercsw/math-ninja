@@ -4,6 +4,25 @@ using UnityEngine;
 public static class ProfileManager {
 	public static String NUMBER_OF_USERS = "NumberOfUsers", USER = "User";
 
+	private static string[] multiplication = {
+		"yellow,10,6x6,6x7,6x8,7x7,7x8,8x8,1x*,0x*",
+		"green,10,10x*",
+		"blue,10,3x6,3x7,3x8,4x6,4x7,4x8",
+		"purple,11,11x*",
+		"brown,10,2x*,3x3,3x4,4x4",
+		"red,10,9x*",
+		"black,10,5x*"
+	};
+	private static string[] substraction = {
+		 "yellow,5,5-*",
+		 "green,10,10-*",
+		 "blue,20,20-*",
+		 "purple,50,50-*",
+		 "brown,75,75-*",
+		 "red,90,90-*",
+		 "black,100,100-*"
+	};
+
 	public static String[] getUsers() {
 		if (getAmountOfUsers() > 0) {
 			String[] users = new String[getAmountOfUsers()];
@@ -31,7 +50,30 @@ public static class ProfileManager {
 				ProfileManager.setIntSetting(GameControl.LEVEL + m.ToString(), 0);
 			}
 		}
-		Debug.Log("Added user: " + username);
+		PlayerPrefs.SetInt(GameControl.PLAYER_NUMBER, getAmountOfUsers());
+		//Load modes
+		loadDefaultModes();
+		Debug.Log("Added user: " + username + "(" + getAmountOfUsers() + ")");
+	}
+
+	static void loadDefaultModes() {
+		loadMode(Game.MODE.MULTIPLICATION, multiplication);
+		loadMode(Game.MODE.SUBSTRACTION, substraction);
+	}
+
+	static void loadMode(Game.MODE m, String[] values) {
+		for (int i = 0; i < values.Length; i++) {
+			if (PlayerPrefs.GetString(ProfileManager.USER
+			+ PlayerPrefs.GetInt(GameControl.PLAYER_NUMBER, 0)
+			+ "level" + (i + 1) + m.ToString()) == "") {
+				PlayerPrefs.SetString(ProfileManager.USER
+			+ PlayerPrefs.GetInt(GameControl.PLAYER_NUMBER, 0)
+			+ "level" + (i + 1) + m.ToString(), values[i]);
+				Debug.Log("Saving: " + ProfileManager.USER
+			+ PlayerPrefs.GetInt(GameControl.PLAYER_NUMBER, 0)
+			+ "level" + (i + 1) + m.ToString());
+			}
+		}
 	}
 
 	public static void showProfile(int i) {
@@ -54,6 +96,11 @@ public static class ProfileManager {
 				ProfileManager.setIntSetting(GameControl.LEVEL + m.ToString(), 0);
 			}
 		}
+		loadDefaultModes();
+	}
+
+	public static void resetAll() {
+		PlayerPrefs.DeleteAll();
 	}
 
 	public static int getAmountOfUsers() {
