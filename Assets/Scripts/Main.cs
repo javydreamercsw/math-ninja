@@ -15,7 +15,8 @@ public class Main : MonoBehaviour {
 			//No players detected Create one
 			GameControl.LoadLevel("New Player");
 		}
-		else if (ProfileManager.getUsers().Length > 1) {
+		else if (ProfileManager.getUsers().Length > 1
+			&& PlayerPrefs.GetInt(GameControl.PLAYER_NUMBER) == 0) {
 			//Need to select a player
 			GameControl.LoadLevel("Select Player");
 		}
