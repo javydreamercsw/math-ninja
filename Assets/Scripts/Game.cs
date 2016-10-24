@@ -28,7 +28,6 @@ public class Game : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake() {
-		PlayerPrefs.DeleteAll();
 		currentMode = (MODE)Enum.Parse(typeof(MODE),
 			ProfileManager.getStringSetting(GameControl.MODE,
 			MODE.MULTIPLICATION.ToString()));
