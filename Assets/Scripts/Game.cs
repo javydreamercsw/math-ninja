@@ -25,45 +25,10 @@ public class Game : MonoBehaviour {
 	private AudioSource source;
 	public AudioClip lose1, lose2, timeover;
 	private int level, answers, questionsLeft = 0;
-	private string[] multiplication = {
-		"yellow,10,6x6,6x7,6x8,7x7,7x8,8x8,1x*,0x*",
-		"green,10,10x*",
-		"blue,10,3x6,3x7,3x8,4x6,4x7,4x8",
-		"purple,11,11x*",
-		"brown,10,2x*,3x3,3x4,4x4",
-		"red,10,9x*",
-		"black,10,5x*"
-	};
-	private string[] substraction = {
-		 "yellow,5,5-*",
-		 "green,10,10-*",
-		 "blue,20,20-*",
-		 "purple,50,50-*",
-		 "brown,75,75-*",
-		 "red,90,90-*",
-		 "black,100,100-*"
-	};
-
-	void loadMode(MODE m, String[] values) {
-		for (int i = 0; i < values.Length; i++) {
-			if (PlayerPrefs.GetString(ProfileManager.USER
-			+ PlayerPrefs.GetInt(GameControl.PLAYER_NUMBER, 0)
-			+ "level" + (i + 1) + m.ToString()) == "") {
-				PlayerPrefs.SetString(ProfileManager.USER
-			+ PlayerPrefs.GetInt(GameControl.PLAYER_NUMBER, 0)
-			+ "level" + (i + 1) + m.ToString(), values[i]);
-				Debug.Log("Saving: " + ProfileManager.USER
-			+ PlayerPrefs.GetInt(GameControl.PLAYER_NUMBER, 0)
-			+ "level" + (i + 1) + m.ToString());
-			}
-		}
-	}
 
 	// Use this for initialization
 	void Awake() {
 		PlayerPrefs.DeleteAll();
-		loadMode(MODE.MULTIPLICATION, multiplication);
-		loadMode(MODE.SUBSTRACTION, substraction);
 		currentMode = (MODE)Enum.Parse(typeof(MODE),
 			ProfileManager.getStringSetting(GameControl.MODE,
 			MODE.MULTIPLICATION.ToString()));
