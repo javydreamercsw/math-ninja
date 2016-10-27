@@ -10,3 +10,4 @@ Build/**/*.sh
 Build/**/*.app
 Build/**/*.apk
 Build/**/*.x86*
+Build/**/*zip
