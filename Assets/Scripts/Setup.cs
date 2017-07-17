@@ -62,6 +62,7 @@ public class Setup : MonoBehaviour
 					//make sure they are real expressions.
 						Game.Evaluate (values [i]);
 					} catch (Exception e) {
+						Debug.Log (e.Message);
 						return false;
 					}
 				}

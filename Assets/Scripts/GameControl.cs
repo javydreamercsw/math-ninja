@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System;
 using System.Text;
 using System.IO;
@@ -48,7 +49,7 @@ public class GameControl : MonoBehaviour
 	{
 		Debug.Log ("Loading level: " + level);
 		//SceneManager.LoadScene (level);
-		Application.LoadLevel (level);
+		SceneManager.LoadScene (level);
 	}
 
 	public Sprite getLevelSprite ()
