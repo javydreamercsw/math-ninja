@@ -8,7 +8,7 @@ This is a Unity 3D version 2017 project. It won't open on earlier builds.
 
 ### How do I get set up? ###
 
-* Mercurial Client, I suggest Tortoise Hg.
+* Git Client, I suggest [Tortoise Git](https://tortoisegit.org/) or [GitKraken](https://www.gitkraken.com/).
 * The information is the the top part of this page on how to clone the repository.
 
 ### Contribution guidelines ###
