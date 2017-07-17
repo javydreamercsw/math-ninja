@@ -1,6 +1,6 @@
 # README #
 
-This is a Unity 3D version 5 project. It won't open on earlier builds.
+This is a Unity 3D version 2017 project. It won't open on earlier builds.
 
 ### What is this repository for? ###
 
